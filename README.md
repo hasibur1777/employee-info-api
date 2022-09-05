@@ -2,5 +2,5 @@
 Slim 4 - api
 <hr>
 
-composer install
-php -S localhost:8888 -t public
+- composer install
+- php -S localhost:8888 -t public
