@@ -15,7 +15,7 @@ $app->addRoutingMiddleware();
 $app->addErrorMiddleware(true, true, true);
 
 $app->get('/', function (Request $request, Response $response) {
-    $response->getBody()->write('Hello Test!');
+    $response->getBody()->write('(get)/employee/all, (post)/employee/add, (put)/employee/update/{id}, (delete)/employee/{id}/delete');
     return $response;
 });
 
