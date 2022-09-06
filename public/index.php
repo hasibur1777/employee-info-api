@@ -8,6 +8,10 @@ use Slim\Factory\AppFactory;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+
 $app = AppFactory::create();
 
 $app->addRoutingMiddleware();
@@ -23,6 +27,35 @@ $app->get('/', function (Request $request, Response $response) {
 // GET all employee
 $app->get('/employee/all', function (Request $request, Response $response) {
     $sql = "SELECT * FROM employees WHERE is_active=1";
+
+    try {
+        $db = new DB();
+        $conn = $db->connect();
+        $stmt = $conn->query($sql);
+        $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+
+        $response->getBody()->write(json_encode($customers));
+        return $response
+            ->withHeader('content-type', 'application/json')
+            ->withStatus(200);
+    } catch (PDOException $e) {
+        $error = array(
+            "message" => $e->getMessage()
+        );
+
+        $response->getBody()->write(json_encode($error));
+        return $response
+            ->withHeader('content-type', 'application/json')
+            ->withStatus(500);
+    }
+});
+
+
+// GET single employee
+$app->get('/employee/{id}', function (Request $request, Response $response) {
+    $id = $request->getAttribute('id');
+    $sql = "SELECT * FROM employees WHERE id='$id' AND is_active=1";
 
     try {
         $db = new DB();
